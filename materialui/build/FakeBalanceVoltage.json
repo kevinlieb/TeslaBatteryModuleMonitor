@@ -1,0 +1,126 @@
+{
+    "Pack": [
+        {
+            "Name": "Balance Voltage",
+            "Value": 4.195000171661377,
+            "DecimalPlaces": 3,
+            "Units": "V"
+        },
+        {
+            "Name": "Balance State",
+            "Value": "On",
+            "DecimalPlaces": -1,
+            "Units": ""
+        },
+        {
+            "Name": "Modules found",
+            "Value": 2,
+            "DecimalPlaces": 0,
+            "Units": ""
+        },
+        {
+            "Name": "Pack Voltage",
+            "Value": 2,
+            "DecimalPlaces": 2,
+            "Units": "V"
+        },
+        {
+            "Name": "High Cell",
+            "Value": 3.8748245239257812,
+            "DecimalPlaces": 3,
+            "Units": "V"
+        },
+        {
+            "Name": "Low  Cell",
+            "Value": 3.7851736545562744,
+            "DecimalPlaces": 3,
+            "Units": "V"
+        },
+        {
+            "Name": "High Temp",
+            "Value": 26.282135009765625,
+            "DecimalPlaces": 1,
+            "Units": "C"
+        },
+        {
+            "Name": "Low  Temp",
+            "Value": 24.469818115234375,
+            "DecimalPlaces": 1,
+            "Units": "C"
+        }
+    ],
+    "Bricks": [
+        {
+            "Module": 1,
+            "ModuleBrick": 1,
+            "PackBrick": 1,
+            "Voltage": 3.798525810241699
+        },
+        {
+            "Module": 1,
+            "ModuleBrick": 2,
+            "PackBrick": 2,
+            "Voltage": 3.798525810241699
+        },
+        {
+            "Module": 1,
+            "ModuleBrick": 3,
+            "PackBrick": 3,
+            "Voltage": 3.800433397293091
+        },
+        {
+            "Module": 1,
+            "ModuleBrick": 4,
+            "PackBrick": 4,
+            "Voltage": 3.8000519275665283
+        },
+        {
+            "Module": 1,
+            "ModuleBrick": 5,
+            "PackBrick": 5,
+            "Voltage": 3.8015778064727783
+        },
+        {
+            "Module": 1,
+            "ModuleBrick": 6,
+            "PackBrick": 6,
+            "Voltage": 3.8748245239257812
+        },
+        {
+            "Module": 2,
+            "ModuleBrick": 1,
+            "PackBrick": 7,
+            "Voltage": 3.7905144691467285
+        },
+        {
+            "Module": 2,
+            "ModuleBrick": 2,
+            "PackBrick": 8,
+            "Voltage": 3.787844181060791
+        },
+        {
+            "Module": 2,
+            "ModuleBrick": 3,
+            "PackBrick": 9,
+            "Voltage": 3.7874627113342285
+        },
+        {
+            "Module": 2,
+            "ModuleBrick": 4,
+            "PackBrick": 10,
+            "Voltage": 3.7851736545562744
+        },
+        {
+            "Module": 2,
+            "ModuleBrick": 5,
+            "PackBrick": 11,
+            "Voltage": 3.7851736545562744
+        },
+        {
+            "Module": 2,
+            "ModuleBrick": 6,
+            "PackBrick": 12,
+            "Voltage": 3.7882256507873535
+        }
+    ]
+}
