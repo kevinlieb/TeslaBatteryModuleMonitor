@@ -1,0 +1,32 @@
+057 vs 045
+
+Add 2017-2024 Tesla Model 3 AWD Long Range Battery Pack Module OEM 1104422-00-M
+Bug fix classic Isolation resistance
+New feature Classic CAC reset. 
+Decode more part partnumbers and Classic HwId
+Bug fixes - %data complete, valid checks for screens, 3y+ module screens, faster initial report
+revamp data percent complete. Now based on rx CANmsg rather than rely on !=0  zero can be valid values
+  data percent complete should be more robust now.  Was seeing 100/95/100 fluttering
+add module level reports & screens for 3/Y, 21+ S/X - was Classic only
+add bms pack sum voltage
+All pack types now decode brick number to module:sub brick e.g. 3/Y (several pack configurations) & 21+ S/X (5x22)
+decode pack descriptions from part numbers
+full 110 bricks for Plaid, drive kWh minus regen - improves estimated milage for non classic
+part number decode or Clasic hwId decode to pack descriptions, new capacity etc
+fix swapped 3/y AC/DC charge values (from a 2024 Y pack), pack new when full on a different CAN message.
+Classic S/X decodes pack part number to determine pack new capacity, or provides original list of possible capacities if no match.
+OTA fw update with Elegant OTA included
+
+
+ 045
+Bug fixes in report, % char in report
+ 044
+Fix 3/Y report to show CAC as Ah (was incorrectly kWh)
+Show TPM version in pack report
+Add CAC avg-min calculation - the average CAC if the module with the minimum brick CAC was replaced with with same average as rest of pack
+ 43
+BMS & SOC reset, Clear Iso faults (non classic only), Pack part number
+ 42
+fix bug in variance code
+ 41
+Report formatting changes, mark invalid data made up by BMS, 90Kwh is 84S
