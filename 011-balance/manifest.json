@@ -1,5 +1,5 @@
 {
-  "name": "TeslaPackMonitor",
+  "name": "TeslaBatteryModuleMonitor",
   "builds": [
     {
       "chipFamily": "ESP32-S3",
