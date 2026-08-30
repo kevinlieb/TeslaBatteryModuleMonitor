@@ -1,0 +1,15 @@
+{
+  "name": "TeslaBatteryModuleMonitor",
+  "version": "Bleeding Edge",
+  "new_install_prompt_erase": false,
+  "new_install_skip_erase": true,
+  "builds": [
+    {
+      "chipFamily": "ESP32-S3",
+      "improv": true,
+      "parts": [
+        { "path": "merged-flash.bin", "offset": 0 }
+      ]
+    }
+  ]
+}

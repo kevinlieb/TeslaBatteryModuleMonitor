@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tesla Battery Module Monitor Installer</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: #1e1e1e;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            border: 1px solid #2d2d2d;
+            text-align: center;
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            color: #ffffff;
+            font-weight: 700;
+        }
+        .subtitle {
+            color: #888888;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+        .version-badge {
+            display: inline-block;
+            background-color: #2b5c8f;
+            color: #ffffff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+        .card {
+            background: #252525;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 1px solid #333333;
+            text-align: left;
+            transition: border-color 0.2s;
+        }
+        .card:hover {
+            border-color: #444444;
+        }
+        .card h2 {
+            font-size: 18px;
+            margin-top: 0;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+        .card p {
+            font-size: 14px;
+            color: #aaaaaa;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        .card-footer {
+            display: flex;
+            justify-content: flex-end;
+        }
+        esp-web-install-button {
+            --esp-tools-button-color: #2b5c8f;
+            --esp-tools-button-text-color: #ffffff;
+            --esp-tools-button-border-radius: 6px;
+        }
+    </style>
+    <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Tesla Battery Module Monitor</h1>
+        <div class="subtitle">Web-based installer and firmware flasher</div>
+        
+        <div class="version-badge">Latest Release: App v<!--APP_VERSION-->4.02<!--/APP_VERSION--> / Web v<!--WEB_VERSION-->1.88<!--/WEB_VERSION--></div>
+        
+        <div class="card">
+            <h2>Upgrade Firmware Only</h2>
+            <p>Updates the Tesla Battery Module Monitor firmware application and UI assets while preserving your existing WiFi credentials and configuration. Choose this option if you are upgrading from an existing 4.x installation.</p>
+            <div class="card-footer">
+                <esp-web-install-button manifest="latest/manifest_update_no_fs.json?v=<!--CACHE_BUSTER-->1788122325<!--/CACHE_BUSTER-->"></esp-web-install-button>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Full Installation</h2>
+            <p>Performs a clean flash of the bootloader, partition table, firmware, and default filesystem. <strong>Warning: This will overwrite all stored settings, calibration parameters, and Wi-Fi configurations on the device.</strong></p>
+            <div class="card-footer">
+                <esp-web-install-button manifest="latest/manifest_new.json?v=<!--CACHE_BUSTER-->1788122325<!--/CACHE_BUSTER-->"></esp-web-install-button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
