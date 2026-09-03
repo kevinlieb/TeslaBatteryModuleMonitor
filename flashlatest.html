@@ -74,49 +74,13 @@
         }
         .card-footer {
             display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 8px;
+            justify-content: flex-end;
         }
-        .flash-btn {
-            background-color: #2b5c8f;
-            color: #ffffff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s, opacity 0.2s;
-        }
-        .flash-btn:hover {
-            background-color: #3572b0;
-        }
-        .flash-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background-color: #333333;
-            border-radius: 4px;
-            overflow: hidden;
-            display: none;
-            margin-top: 10px;
-        }
-        .progress-fill {
-            height: 100%;
-            width: 0%;
-            background-color: #2b5c8f;
-            transition: width 0.2s ease;
-        }
-        .status-msg {
+        .note {
             font-size: 13px;
             color: #888888;
-            min-height: 18px;
-            width: 100%;
-            text-align: right;
+            margin-top: 20px;
+            line-height: 1.4;
         }
         esp-web-install-button {
             --esp-tools-button-color: #2b5c8f;
@@ -137,11 +101,7 @@
             <h2>Upgrade Firmware Only</h2>
             <p>Updates the Tesla Battery Module Monitor firmware application and UI assets while preserving your existing WiFi credentials and configuration. Choose this option if you are upgrading an existing device.</p>
             <div class="card-footer">
-                <button id="btn-flash-fw" class="flash-btn">Install / Upgrade Firmware</button>
-                <div class="progress-bar" id="fw-progress-bar">
-                    <div class="progress-fill" id="fw-progress"></div>
-                </div>
-                <div class="status-msg" id="fw-status"></div>
+                <esp-web-install-button manifest="latest/manifest_update_no_fs.json?v=<!--CACHE_BUSTER-->1788419399<!--/CACHE_BUSTER-->"></esp-web-install-button>
             </div>
         </div>
         
@@ -149,97 +109,13 @@
             <h2>Full Installation</h2>
             <p>Performs a clean flash of the bootloader, partition table, firmware, and default filesystem. <strong>Warning: This will overwrite all stored settings, calibration parameters, and Wi-Fi configurations on the device.</strong></p>
             <div class="card-footer">
-                <esp-web-install-button manifest="latest/manifest_new.json?v=<!--CACHE_BUSTER-->1788418416<!--/CACHE_BUSTER-->"></esp-web-install-button>
+                <esp-web-install-button manifest="latest/manifest_new.json?v=<!--CACHE_BUSTER-->1788419399<!--/CACHE_BUSTER-->"></esp-web-install-button>
             </div>
         </div>
+
+        <div class="note">
+            <em>💡 Tip: If your device does not reboot automatically after flashing over USB, press the reset button on the dial or power-cycle the device.</em>
+        </div>
     </div>
-
-    <script type="module">
-        import { ESPLoader, Transport } from "https://unpkg.com/esptool-js@0.5.4/bundle.js";
-
-        const btn = document.getElementById("btn-flash-fw");
-        const progressFill = document.getElementById("fw-progress");
-        const progressBar = document.getElementById("fw-progress-bar");
-        const statusMsg = document.getElementById("fw-status");
-
-        const BIN_URL = "latest/merged-flash.bin?v=<!--CACHE_BUSTER-->1788418416<!--/CACHE_BUSTER-->";
-
-        function setStatus(text, isError = false) {
-            statusMsg.textContent = text;
-            statusMsg.style.color = isError ? "#f44336" : (text.startsWith("✓") ? "#4caf50" : "#aaaaaa");
-        }
-
-        btn.addEventListener("click", async () => {
-            if (!navigator.serial) {
-                alert("Web Serial is not supported in this browser. Please use Google Chrome, Microsoft Edge, or Opera.");
-                return;
-            }
-
-            btn.disabled = true;
-            progressBar.style.display = "block";
-            progressFill.style.width = "0%";
-            setStatus("Connecting to device via USB Serial...");
-
-            let port = null;
-            let transport = null;
-
-            try {
-                port = await navigator.serial.requestPort();
-                transport = new Transport(port, false);
-                const esploader = new ESPLoader({
-                    transport: transport,
-                    baudrate: 921600,
-                    romBaudrate: 115200,
-                    terminal: {
-                        clean() {},
-                        writeLine(data) {},
-                        write(data) {}
-                    }
-                });
-
-                await esploader.main();
-                setStatus("Downloading firmware binary...");
-
-                const resp = await fetch(BIN_URL);
-                if (!resp.ok) throw new Error("Failed to download firmware binary (" + resp.status + ")");
-                const buffer = await resp.arrayBuffer();
-                const binStr = new TextDecoder("iso-8859-1").decode(new Uint8Array(buffer));
-
-                setStatus("Flashing firmware (preserving filesystem)...");
-
-                await esploader.writeFlash({
-                    fileArray: [{ data: binStr, address: 0x0000 }],
-                    flashMode: "dio",
-                    flashFreq: "40m",
-                    flashSize: "8MB",
-                    eraseAll: false,
-                    compress: true,
-                    reportProgress: (fileIndex, written, total) => {
-                        const pct = Math.floor((written / total) * 100);
-                        progressFill.style.width = pct + "%";
-                        statusMsg.textContent = `Flashing firmware: ${pct}%`;
-                    }
-                });
-
-                progressFill.style.width = "100%";
-                setStatus("✓ Installation complete! Rebooting device...");
-
-                await esploader.after("hard_reset");
-                await transport.disconnect();
-            } catch (err) {
-                console.error(err);
-                if (err.name !== "NotFoundError") {
-                    setStatus("✗ Flashing failed: " + (err.message || err), true);
-                } else {
-                    setStatus("Connection cancelled.");
-                }
-                if (transport) {
-                    try { await transport.disconnect(); } catch (e) {}
-                }
-            } finally {
-                btn.disabled = false;
-            }
-        });
-    </script>
 </body>
 </html>
