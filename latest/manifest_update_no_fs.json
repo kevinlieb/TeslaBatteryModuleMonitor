@@ -1,11 +1,10 @@
 {
   "name": "TeslaBatteryModuleMonitor",
-  "version": "Bleeding Edge",
-  "new_install_prompt_erase": true,
+  "version": "4.02 (Web 1.88)",
   "builds": [
     {
       "chipFamily": "ESP32-S3",
-      "improv": false,
+      "improv": true,
       "parts": [
         { "path": "firmware.bin", "offset": 65536 }
       ]
