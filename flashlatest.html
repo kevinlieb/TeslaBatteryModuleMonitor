@@ -87,8 +87,29 @@
             --esp-tools-button-text-color: #ffffff;
             --esp-tools-button-border-radius: 6px;
         }
-    </style>
     <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
+    <script>
+        // Ensure "Upgrade Firmware Only" dialog strictly forces update mode (never erase)
+        const observer = new MutationObserver((mutations) => {
+            for (const mutation of mutations) {
+                for (const node of mutation.addedNodes) {
+                    if (node.tagName === 'EWT-INSTALL-DIALOG') {
+                        if (node.manifestPath && node.manifestPath.includes('manifest_update_no_fs')) {
+                            const origStart = node._startInstall;
+                            node._startInstall = function(erase) {
+                                return origStart.call(this, false);
+                            };
+                            Object.defineProperty(node, '_isSameFirmware', {
+                                get: () => true,
+                                configurable: true
+                            });
+                        }
+                    }
+                }
+            }
+        });
+        observer.observe(document.body, { childList: true });
+    </script>
 </head>
 <body>
     <div class="container">
@@ -101,7 +122,7 @@
             <h2>Upgrade Firmware Only</h2>
             <p>Updates the Tesla Battery Module Monitor firmware application and UI assets while preserving your existing WiFi credentials and configuration. Choose this option if you are upgrading an existing device.</p>
             <div class="card-footer">
-                <esp-web-install-button manifest="latest/manifest_update_no_fs.json?v=<!--CACHE_BUSTER-->1788420889<!--/CACHE_BUSTER-->"></esp-web-install-button>
+                <esp-web-install-button manifest="latest/manifest_update_no_fs.json?v=<!--CACHE_BUSTER-->1788422026<!--/CACHE_BUSTER-->"></esp-web-install-button>
             </div>
         </div>
         
@@ -109,7 +130,7 @@
             <h2>Full Installation</h2>
             <p>Performs a clean flash of the bootloader, partition table, firmware, and default filesystem. <strong>Warning: This will overwrite all stored settings, calibration parameters, and Wi-Fi configurations on the device.</strong></p>
             <div class="card-footer">
-                <esp-web-install-button manifest="latest/manifest_new.json?v=<!--CACHE_BUSTER-->1788420889<!--/CACHE_BUSTER-->"></esp-web-install-button>
+                <esp-web-install-button manifest="latest/manifest_new.json?v=<!--CACHE_BUSTER-->1788422026<!--/CACHE_BUSTER-->"></esp-web-install-button>
             </div>
         </div>
 
