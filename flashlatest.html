@@ -89,6 +89,27 @@
         }
     </style>
     <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
+    <script>
+        // Disable serial Wi-Fi provisioning prompt; redirect to Dashboard
+        const observer = new MutationObserver((mutations) => {
+            for (const m of mutations) {
+                for (const node of m.addedNodes) {
+                    if (node.tagName === 'EWT-INSTALL-DIALOG') {
+                        let stateVal = node._state;
+                        Object.defineProperty(node, '_state', {
+                            get: () => stateVal,
+                            set: (v) => {
+                                stateVal = (v === 'PROVISION') ? 'DASHBOARD' : v;
+                                if (node.requestUpdate) node.requestUpdate();
+                            },
+                            configurable: true
+                        });
+                    }
+                }
+            }
+        });
+        observer.observe(document.body, { childList: true });
+    </script>
 </head>
 <body>
     <div class="container">
