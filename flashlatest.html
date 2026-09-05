@@ -123,15 +123,32 @@
                             configurable: true
                         });
 
-                        const checkShadow = setInterval(() => {
+                        // Suppress "Visit Device" link by clearing nextUrl from Improv client
+                        let clientVal;
+                        Object.defineProperty(node, '_client', {
+                            get: () => clientVal,
+                            set: (c) => {
+                                if (c) c.nextUrl = undefined;
+                                clientVal = c;
+                            },
+                            configurable: true
+                        });
+
+                        // Hook Lit component lifecycle so filterDashboard runs synchronously on every render
+                        const origUpdated = node.updated;
+                        node.updated = function(changedProps) {
+                            if (origUpdated) origUpdated.call(this, changedProps);
+                            if (this.shadowRoot) {
+                                filterDashboard(this.shadowRoot);
+                            }
+                        };
+
+                        const interval = setInterval(() => {
                             if (node.shadowRoot) {
                                 filterDashboard(node.shadowRoot);
-                                new MutationObserver(() => filterDashboard(node.shadowRoot))
-                                    .observe(node.shadowRoot, { childList: true, subtree: true });
-                                clearInterval(checkShadow);
                             }
                             if (!node.isConnected) {
-                                clearInterval(checkShadow);
+                                clearInterval(interval);
                             }
                         }, 50);
                     }
