@@ -90,7 +90,24 @@
     </style>
     <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
     <script>
-        // Disable serial Wi-Fi provisioning prompt; redirect to Dashboard
+        function replaceProgressText(root) {
+            if (!root) return;
+            const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null, false);
+            let textNode;
+            while (textNode = walker.nextNode()) {
+                if (textNode.nodeValue && (textNode.nodeValue.includes("This will take 2 minutes") || textNode.nodeValue.includes("This will take a minute"))) {
+                    textNode.nodeValue = textNode.nodeValue
+                        .replace(/This will take 2 minutes\.?/g, "Installation in progress (typically 30–60 seconds).")
+                        .replace(/This will take a minute\.?/g, "Installation in progress (typically 30–60 seconds).");
+                }
+            }
+            const elements = root.querySelectorAll ? root.querySelectorAll('*') : [];
+            for (const el of elements) {
+                if (el.shadowRoot) replaceProgressText(el.shadowRoot);
+            }
+        }
+
+        // Disable serial Wi-Fi provisioning prompt; customize progress text
         const observer = new MutationObserver((mutations) => {
             for (const m of mutations) {
                 for (const node of m.addedNodes) {
@@ -104,6 +121,17 @@
                             },
                             configurable: true
                         });
+
+                        const hookShadow = () => {
+                            if (node.shadowRoot) {
+                                replaceProgressText(node.shadowRoot);
+                                new MutationObserver(() => replaceProgressText(node.shadowRoot))
+                                    .observe(node.shadowRoot, { childList: true, subtree: true, characterData: true });
+                            }
+                        };
+                        hookShadow();
+                        setTimeout(hookShadow, 50);
+                        setTimeout(hookShadow, 200);
                     }
                 }
             }
