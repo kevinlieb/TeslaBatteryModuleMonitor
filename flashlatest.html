@@ -96,7 +96,8 @@
             for (const item of items) {
                 const text = item.textContent || '';
                 if (text.includes('Wi-Fi') || text.includes('Visit Device') || text.includes('Home Assistant') || text.includes('Fund Development')) {
-                    item.style.display = 'none';
+                    item.style.setProperty('display', 'none', 'important');
+                    item.remove();
                 }
             }
         }
@@ -122,16 +123,17 @@
                             configurable: true
                         });
 
-                        const hookShadow = () => {
+                        const checkShadow = setInterval(() => {
                             if (node.shadowRoot) {
                                 filterDashboard(node.shadowRoot);
                                 new MutationObserver(() => filterDashboard(node.shadowRoot))
                                     .observe(node.shadowRoot, { childList: true, subtree: true });
+                                clearInterval(checkShadow);
                             }
-                        };
-                        hookShadow();
-                        setTimeout(hookShadow, 50);
-                        setTimeout(hookShadow, 200);
+                            if (!node.isConnected) {
+                                clearInterval(checkShadow);
+                            }
+                        }, 50);
                     }
                 }
             }
