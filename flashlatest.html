@@ -82,13 +82,99 @@
             margin-top: 20px;
             line-height: 1.4;
         }
+        .pin-input {
+            background: #181818;
+            border: 1px solid #444;
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 16px;
+            width: 100%;
+            box-sizing: border-box;
+            outline: none;
+        }
+        .pin-input:focus {
+            border-color: #2b5c8f;
+        }
+        .btn-unlock {
+            background-color: #2b5c8f;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .btn-unlock:hover {
+            background-color: #3877b8;
+        }
         esp-web-install-button {
             --esp-tools-button-color: #2b5c8f;
             --esp-tools-button-text-color: #ffffff;
             --esp-tools-button-border-radius: 6px;
         }
     </style>
-    <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
+    <script>
+        const AUTH_HASH = "<!--AUTH_HASH-->bafdd578aaad8079651f73d09a6828e3ae6c95b75e49de3c83a527b721ec57d0<!--/AUTH_HASH-->";
+
+        async function sha256(str) {
+            const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+            return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function verifyPin(entered) {
+            if (!entered) return false;
+            try {
+                const hash = await sha256(entered.trim());
+                return hash.toLowerCase() === AUTH_HASH.toLowerCase();
+            } catch (e) {
+                return false;
+            }
+        }
+
+        async function checkAuth(pinValue) {
+            const pin = pinValue !== undefined ? pinValue : (document.getElementById('pin-input')?.value || '');
+            if (await verifyPin(pin)) {
+                sessionStorage.setItem('flasher_auth', pin);
+                const authBox = document.getElementById('auth-box');
+                const flasherContent = document.getElementById('flasher-content');
+                if (authBox) authBox.style.display = 'none';
+                if (flasherContent) flasherContent.style.display = 'block';
+
+                if (!document.querySelector('script[src*="install-button.js"]')) {
+                    const s = document.createElement('script');
+                    s.type = 'module';
+                    s.src = 'https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module';
+                    document.head.appendChild(s);
+                }
+            } else {
+                if (pinValue === undefined) {
+                    const err = document.getElementById('auth-error');
+                    if (err) err.style.display = 'block';
+                } else {
+                    const authBox = document.getElementById('auth-box');
+                    if (authBox) authBox.style.display = 'block';
+                }
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            const params = new URLSearchParams(window.location.search);
+            const keyParam = params.get('key') || params.get('pin');
+            const stored = sessionStorage.getItem('flasher_auth');
+
+            if (keyParam && await verifyPin(keyParam)) {
+                await checkAuth(keyParam);
+            } else if (stored && await verifyPin(stored)) {
+                await checkAuth(stored);
+            } else {
+                const authBox = document.getElementById('auth-box');
+                if (authBox) authBox.style.display = 'block';
+            }
+        });
+    </script>
 </head>
 <body>
     <div class="container">
@@ -97,16 +183,30 @@
         
         <div class="version-badge">Latest Release: App v<!--APP_VERSION-->4.02<!--/APP_VERSION--> / Web v<!--WEB_VERSION-->1.88<!--/WEB_VERSION--></div>
         
-        <div class="card">
-            <h2>Full Installation</h2>
-            <p>Performs a full installation and provisioning of the bootloader, partition table, firmware, and default filesystem. <strong>Warning: This will overwrite all stored settings, calibration parameters, and Wi-Fi configurations on the device.</strong></p>
-            <div class="card-footer">
-                <esp-web-install-button manifest="latest/manifest_new.json?v=<!--CACHE_BUSTER-->1788641237<!--/CACHE_BUSTER-->"></esp-web-install-button>
+        <!-- Authentication Gate -->
+        <div id="auth-box" class="card" style="display: none;">
+            <h2>Authorization Required</h2>
+            <p>Access to this installer is restricted. Enter your 8-digit PIN to proceed:</p>
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <input type="password" id="pin-input" class="pin-input" placeholder="Enter 8-digit PIN" onkeydown="if(event.key==='Enter') checkAuth();">
+                <button class="btn-unlock" onclick="checkAuth()">Unlock</button>
             </div>
+            <div id="auth-error" style="color: #ff6b6b; font-size: 13px; margin-top: 10px; display: none;">Invalid PIN. Access denied.</div>
         </div>
 
-        <div class="note">
-            <em>💡 Tip: If your device does not reboot automatically after flashing over USB, press the reset button on the dial or power-cycle the device.</em>
+        <!-- Flasher Content (Rendered only after authentication) -->
+        <div id="flasher-content" style="display: none;">
+            <div class="card">
+                <h2>Full Installation</h2>
+                <p>Performs a full installation and provisioning of the bootloader, partition table, firmware, and default filesystem. <strong>Warning: This will overwrite all stored settings, calibration parameters, and Wi-Fi configurations on the device.</strong></p>
+                <div class="card-footer">
+                    <esp-web-install-button manifest="latest/manifest_new.json?v=<!--CACHE_BUSTER-->1788641237<!--/CACHE_BUSTER-->"></esp-web-install-button>
+                </div>
+            </div>
+
+            <div class="note">
+                <em>💡 Tip: If your device does not reboot automatically after flashing over USB, press the reset button on the dial or power-cycle the device.</em>
+            </div>
         </div>
     </div>
 </body>
