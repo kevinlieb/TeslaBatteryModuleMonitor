@@ -89,74 +89,6 @@
         }
     </style>
     <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
-    <script>
-        function filterDashboard(shadow) {
-            if (!shadow) return;
-            const items = shadow.querySelectorAll('ew-list-item');
-            for (const item of items) {
-                const text = item.textContent || '';
-                if (text.includes('Wi-Fi') || text.includes('Visit Device') || text.includes('Home Assistant') || text.includes('Fund Development')) {
-                    item.style.setProperty('display', 'none', 'important');
-                    item.remove();
-                }
-            }
-        }
-
-        // Simplify flasher: keep Improv version info, always allow install, hide Wi-Fi setup & extra options
-        const observer = new MutationObserver((mutations) => {
-            for (const m of mutations) {
-                for (const node of m.addedNodes) {
-                    if (node.tagName === 'EWT-INSTALL-DIALOG') {
-                        let stateVal = node._state;
-                        Object.defineProperty(node, '_state', {
-                            get: () => stateVal,
-                            set: (v) => {
-                                stateVal = (v === 'PROVISION') ? 'DASHBOARD' : v;
-                                if (node.requestUpdate) node.requestUpdate();
-                            },
-                            configurable: true
-                        });
-
-                        // Always show the Install/Update button even if already on the same version
-                        Object.defineProperty(node, '_isSameVersion', {
-                            get: () => false,
-                            configurable: true
-                        });
-
-                        // Suppress "Visit Device" link by clearing nextUrl from Improv client
-                        let clientVal;
-                        Object.defineProperty(node, '_client', {
-                            get: () => clientVal,
-                            set: (c) => {
-                                if (c) c.nextUrl = undefined;
-                                clientVal = c;
-                            },
-                            configurable: true
-                        });
-
-                        // Hook Lit component lifecycle so filterDashboard runs synchronously on every render
-                        const origUpdated = node.updated;
-                        node.updated = function(changedProps) {
-                            if (origUpdated) origUpdated.call(this, changedProps);
-                            if (this.shadowRoot) {
-                                filterDashboard(this.shadowRoot);
-                            }
-                        };
-
-                        const interval = setInterval(() => {
-                            if (node.shadowRoot) {
-                                filterDashboard(node.shadowRoot);
-                            }
-                            if (!node.isConnected) {
-                                clearInterval(interval);
-                            }
-                        }, 50);
-                    }
-                }
-            }
-        });
-        observer.observe(document.body, { childList: true });
-    </script>
 </head>
 <body>
     <div class="container">
@@ -166,16 +98,8 @@
         <div class="version-badge">Latest Release: App v<!--APP_VERSION-->4.02<!--/APP_VERSION--> / Web v<!--WEB_VERSION-->1.88<!--/WEB_VERSION--></div>
         
         <div class="card">
-            <h2>Upgrade Firmware Only</h2>
-            <p>Updates the Tesla Battery Module Monitor firmware application and UI assets while preserving your existing WiFi credentials and configuration. Choose this option if you are upgrading an existing device.</p>
-            <div class="card-footer">
-                <esp-web-install-button manifest="latest/manifest_update_no_fs.json?v=<!--CACHE_BUSTER-->1788641237<!--/CACHE_BUSTER-->"></esp-web-install-button>
-            </div>
-        </div>
-        
-        <div class="card">
             <h2>Full Installation</h2>
-            <p>Performs a clean flash of the bootloader, partition table, firmware, and default filesystem. <strong>Warning: This will overwrite all stored settings, calibration parameters, and Wi-Fi configurations on the device.</strong></p>
+            <p>Performs a full installation and provisioning of the bootloader, partition table, firmware, and default filesystem. <strong>Warning: This will overwrite all stored settings, calibration parameters, and Wi-Fi configurations on the device.</strong></p>
             <div class="card-footer">
                 <esp-web-install-button manifest="latest/manifest_new.json?v=<!--CACHE_BUSTER-->1788641237<!--/CACHE_BUSTER-->"></esp-web-install-button>
             </div>
