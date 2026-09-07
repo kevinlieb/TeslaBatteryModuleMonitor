@@ -1,3 +1,3 @@
 # TeslaBatteryModuleMonitor Web Installer
 
-Web-based flasher for TeslaBatteryModuleMonitor firmware release v4.02 (Web v1.88).
+Web-based flasher for TeslaBatteryModuleMonitor firmware release v4.04 (Web v1.89).

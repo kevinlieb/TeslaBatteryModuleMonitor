@@ -1,6 +1,6 @@
 {
   "name": "TeslaBatteryModuleMonitor",
-  "version": "4.02 (Web 1.88)",
+  "version": "4.04 (Web 1.89)",
   "builds": [
     {
       "chipFamily": "ESP32-S3",
