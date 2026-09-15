@@ -117,7 +117,7 @@
         }
     </style>
     <script>
-        const AUTH_HASH = "bafdd578aaad8079651f73d09a6828e3ae6c95b75e49de3c83a527b721ec57d0";
+        const AUTH_HASH = "1b5cb42bd23a245885647784267edec165dff569b3ad99e7cab8671c51f3f54a";
 
         async function sha256(str) {
             const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
@@ -181,7 +181,7 @@
         <h1>Tesla Battery Module Monitor</h1>
         <div class="subtitle">Web-based installer and firmware flasher</div>
         
-        <div class="version-badge">Latest Release: App v<!--APP_VERSION-->4.04<!--/APP_VERSION--> / Web v<!--WEB_VERSION-->1.89<!--/WEB_VERSION--></div>
+        <div class="version-badge">Latest Release: App v<!--APP_VERSION-->4.05<!--/APP_VERSION--> / Web v<!--WEB_VERSION-->1.89<!--/WEB_VERSION--></div>
         
         <!-- Authentication Gate -->
         <div id="auth-box" class="card" style="display: none;">
@@ -200,7 +200,7 @@
                 <h2>Full Installation</h2>
                 <p>Performs a full installation and provisioning of the bootloader, partition table, firmware, and default filesystem. <strong>Warning: This will overwrite all stored settings, calibration parameters, and Wi-Fi configurations on the device.</strong></p>
                 <div class="card-footer">
-                    <esp-web-install-button manifest="latest/manifest_new.json?v=<!--CACHE_BUSTER-->1788824832<!--/CACHE_BUSTER-->"></esp-web-install-button>
+                    <esp-web-install-button manifest="latest/manifest_new.json?v=<!--CACHE_BUSTER-->1789440527<!--/CACHE_BUSTER-->"></esp-web-install-button>
                 </div>
             </div>
 
